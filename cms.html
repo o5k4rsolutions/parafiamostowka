@@ -9,6 +9,26 @@
     <style>
         body { font-family: 'Open Sans', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Styl edytora treści */
+        #announcement-content-editable {
+            min-height: 150px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        #announcement-content-editable table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        #announcement-content-editable th, #announcement-content-editable td {
+            border: 1px solid #d6d3d1;
+            padding: 8px;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-900 flex flex-col min-h-screen">
@@ -19,7 +39,7 @@
                 <svg class="w-7 h-7 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v20M5 9h14"/></svg>
                 <span>Panel CMS</span>
             </div>
-            <div id="user-info" class="hidden flex items-center gap-4 text-sm">
+            <div id="user-info" class="hidden flex items-center gap-4 text-sm transition-opacity duration-300">
                 <span id="user-email" class="text-stone-600 font-medium"></span>
                 <button id="logout-btn" class="bg-stone-200 hover:bg-stone-300 text-stone-800 px-3 py-1.5 rounded-lg transition font-medium">Wyloguj</button>
             </div>
@@ -28,23 +48,25 @@
 
     <main class="flex-grow max-w-4xl mx-auto px-6 py-10 w-full">
         
-        <section id="login-section" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 max-w-md mx-auto my-12">
+        <section id="login-section" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 max-w-md mx-auto my-12 transition-all duration-300">
             <h1 class="text-3xl font-serif text-emerald-900 mb-6 text-center">Logowanie do CMS</h1>
             <form id="login-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-stone-700 mb-1">Adres e-mail</label>
-                    <input type="email5" id="login-email" required class="w-full px-4 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+                    <input type="email" id="login-email" required class="w-full px-4 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-stone-700 mb-1">Hasło</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+                    <input type="password" id="login-password" required class="w-full px-4 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none transition">
                 </div>
                 <div id="login-error" class="text-red-600 text-sm hidden"></div>
-                <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-2.5 rounded-xl transition">Zaloguj się</button>
+                <button type="submit" id="login-btn" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-2.5 rounded-xl transition flex justify-center items-center">
+                    <span id="login-btn-text">Zaloguj się</span>
+                </button>
             </form>
         </section>
 
-        <section id="cms-dashboard" class="hidden space-y-10">
+        <section id="cms-dashboard" class="hidden space-y-10 transition-all duration-300">
             
             <!-- Add / Edit Form Card -->
             <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
@@ -57,7 +79,40 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-stone-700 mb-1">Treść ogłoszenia</label>
-                        <textarea id="announcement-content" rows="5" required class="w-full px-4 py-2 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none"></textarea>
+                        
+                        <!-- Pasek narzędzi formatowania -->
+                        <div class="flex flex-wrap gap-1.5 p-2 bg-stone-50 border border-stone-300 rounded-t-xl border-b-0 text-stone-700 text-xs items-center">
+                            <button type="button" onclick="formatText('bold')" class="p-1.5 hover:bg-stone-200 rounded font-bold px-2.5" title="Pogrubienie">B</button>
+                            <button type="button" onclick="formatText('italic')" class="p-1.5 hover:bg-stone-200 rounded italic px-2.5" title="Kursywa">I</button>
+                            <button type="button" onclick="formatText('underline')" class="p-1.5 hover:bg-stone-200 rounded underline px-2.5" title="Podkreślenie">U</button>
+                            <span class="w-px h-4 bg-stone-300 mx-1"></span>
+                            
+                            <div class="flex items-center gap-1">
+                                <label class="text-[11px] text-stone-500">Kolor:</label>
+                                <input type="color" onchange="formatTextColor(this.value)" class="w-6 h-6 border-0 cursor-pointer bg-transparent" title="Kolor tekstu">
+                            </div>
+                            <div class="flex items-center gap-1 ml-2">
+                                <label class="text-[11px] text-stone-500">Tło:</label>
+                                <input type="color" value="#ffff00" onchange="formatTextBgColor(this.value)" class="w-6 h-6 border-0 cursor-pointer bg-transparent" title="Kolor tła tekstu">
+                            </div>
+                            <span class="w-px h-4 bg-stone-300 mx-1"></span>
+
+                            <select onchange="formatTextSize(this.value); this.selectedIndex=0;" class="bg-white border border-stone-300 rounded px-1.5 py-1 text-xs">
+                                <option value="" disabled selected>Rozmiar czcionki</option>
+                                <option value="1">Mały (1)</option>
+                                <option value="3">Normalny (3)</option>
+                                <option value="5">Duży (5)</option>
+                                <option value="7">Bardzo duży (7)</option>
+                            </select>
+                            
+                            <span class="w-px h-4 bg-stone-300 mx-1"></span>
+                            <button type="button" onclick="insertLink()" class="p-1.5 hover:bg-stone-200 rounded px-2" title="Wstaw link">🔗 Link</button>
+                            <button type="button" onclick="insertTable()" class="p-1.5 hover:bg-stone-200 rounded px-2" title="Wstaw tabelę">📊 Tabela</button>
+                        </div>
+
+                        <!-- Edytowalny kontener treści -->
+                        <div id="announcement-content-editable" contenteditable="true" class="w-full px-4 py-3 border border-stone-300 rounded-b-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white"></div>
+                        <textarea id="announcement-content" class="hidden"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-stone-700 mb-1">Zdjęcie (opcjonalnie)</label>
@@ -88,6 +143,44 @@
         <p>Panel CMS Parafii pw. Miłosierdzia Bożego w Mostówce | Wykonanie: <b>O5K4R Solutions</b></p>
     </footer>
 
+    <!-- Narzędzia edytora tekstowego -->
+    <script>
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+        function formatTextColor(color) {
+            document.execCommand('foreColor', false, color);
+        }
+        function formatTextBgColor(color) {
+            document.execCommand('hiliteColor', false, color);
+        }
+        function formatTextSize(size) {
+            document.execCommand('fontSize', false, size);
+        }
+        function insertLink() {
+            const url = prompt("Podaj adres URL linku:", "https://");
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+        }
+        function insertTable() {
+            const rows = prompt("Liczba wierszy:", "2");
+            const cols = prompt("Liczba kolumn:", "2");
+            if (rows && cols) {
+                let tableHtml = '<table style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+                for (let i = 0; i < parseInt(rows); i++) {
+                    tableHtml += '<tr>';
+                    for (let j = 0; j < parseInt(cols); j++) {
+                        tableHtml += '<td style="border: 1px solid #d6d3d1; padding: 8px;">Komórka</td>';
+                    }
+                    tableHtml += '</tr>';
+                }
+                tableHtml += '</table><p><br></p>';
+                document.execCommand('insertHTML', false, tableHtml);
+            }
+        }
+    </script>
+
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -95,12 +188,12 @@
         import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyDBi7eDzl8b2_ZsyiMWSEipDazx0h29rCw",
-  authDomain: "parafiamostowka.firebaseapp.com",
-  projectId: "parafiamostowka",
-  storageBucket: "parafiamostowka.firebasestorage.app",
-  messagingSenderId: "468721591440",
-  appId: "1:468721591440:web:1bd98b3cfa42fbdc8e6415"
+            apiKey: "AIzaSyDBi7eDzl8b2_ZsyiMWSEipDazx0h29rCw",
+            authDomain: "parafiamostowka.firebaseapp.com",
+            projectId: "parafiamostowka",
+            storageBucket: "parafiamostowka.firebasestorage.app",
+            messagingSenderId: "468721591440",
+            appId: "1:468721591440:web:1bd98b3cfa42fbdc8e6415"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -114,8 +207,11 @@
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
         const logoutBtn = document.getElementById('logout-btn');
+        const loginBtnText = document.getElementById('login-btn-text');
 
         const announcementForm = document.getElementById('announcement-form');
+        const announcementContentEditable = document.getElementById('announcement-content-editable');
+        const announcementContent = document.getElementById('announcement-content');
         const formTitle = document.getElementById('form-title');
         const saveBtn = document.getElementById('save-btn');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
@@ -125,21 +221,26 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                loginSection.classList.add('hidden');
-                cmsDashboard.classList.remove('hidden');
-                userInfo.classList.remove('hidden');
+                loginSection.classList.add('opacity-0', 'scale-95', 'hidden');
+                setTimeout(() => {
+                    cmsDashboard.classList.remove('hidden');
+                    cmsDashboard.classList.add('fade-in');
+                    userInfo.classList.remove('hidden');
+                }, 150);
                 userEmailSpan.textContent = user.email;
                 loadAdminAnnouncements();
             } else {
-                loginSection.classList.remove('hidden');
                 cmsDashboard.classList.add('hidden');
                 userInfo.classList.add('hidden');
+                loginSection.classList.remove('hidden', 'opacity-0', 'scale-95');
+                loginSection.classList.add('fade-in');
             }
         });
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             loginError.classList.add('hidden');
+            loginBtnText.textContent = "Logowanie...";
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             try {
@@ -147,12 +248,13 @@
             } catch (error) {
                 loginError.textContent = "Błąd logowania: " + error.message;
                 loginError.classList.remove('hidden');
+                loginBtnText.textContent = "Zaloguj się";
             }
         });
 
-        // Logout handler
         logoutBtn.addEventListener('click', () => {
             signOut(auth);
+            loginBtnText.textContent = "Zaloguj się";
         });
 
         function convertFileToBase64(file) {
@@ -174,8 +276,10 @@
 
         announcementForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            announcementContent.value = announcementContentEditable.innerHTML;
+            
             const title = document.getElementById('announcement-title').value;
-            const content = document.getElementById('announcement-content').value;
+            const content = announcementContent.value;
             const imageFile = document.getElementById('announcement-image').files[0];
             const editId = editIdInput.value;
 
@@ -189,11 +293,7 @@
                 }
 
                 if (editId) {
-                    // Update existing
                     const docRef = doc(db, "announcements", editId);
-                    const existingDoc = await getDoc(docRef);
-                    const existingData = existingDoc.data();
-
                     const updateData = {
                         title,
                         content,
@@ -206,7 +306,6 @@
                     await updateDoc(docRef, updateData);
                     alert("Ogłoszenie zaktualizowano pomyślnie!");
                 } else {
-                    // Create new
                     const newDoc = {
                         title,
                         content,
@@ -233,6 +332,7 @@
 
         function resetForm() {
             announcementForm.reset();
+            announcementContentEditable.innerHTML = '';
             editIdInput.value = '';
             formTitle.textContent = "Dodaj nowe ogłoszenie";
             saveBtn.textContent = "Opublikuj ogłoszenie";
@@ -241,7 +341,6 @@
 
         cancelEditBtn.addEventListener('click', resetForm);
 
-        // Load announcements for admin management
         async function loadAdminAnnouncements() {
             adminLoader.style.display = 'block';
             adminList.innerHTML = '';
@@ -259,7 +358,7 @@
                     const data = docSnap.data();
                     const id = docSnap.id;
                     const item = document.createElement('div');
-                    item.className = 'border border-stone-200 rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-50/50';
+                    item.className = 'border border-stone-200 rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-50/50 fade-in';
                     
                     let datesInfo = `<span class="text-xs text-stone-500">Dodano: ${data.createdAtDate || 'Brak'}</span>`;
                     if (data.editedAtDate) {
@@ -287,7 +386,7 @@
         window.editAnnouncement = (id, title, content) => {
             editIdInput.value = id;
             document.getElementById('announcement-title').value = title;
-            document.getElementById('announcement-content').value = content;
+            announcementContentEditable.innerHTML = content;
             formTitle.textContent = "Edytuj ogłoszenie";
             saveBtn.textContent = "Zapisz zmiany";
             cancelEditBtn.classList.remove('hidden');

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parafia pw. Miłosierdzia Bożego w Mostówce</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10262b;      /* głęboki zielono-granatowy */
+    --ray:#dbe8ee;      /* blady błękit z obrazu Miłosierdzia */
+    --mist:#f3f7f8;
+    --mercy:#b4382e;    /* czerwień promienia, tylko akcent */
+    --line:rgba(16,38,43,.12);
+  }
+  html{scroll-padding-top:5rem}
+  body{font-family:'Manrope',system-ui,sans-serif;background:var(--mist);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .display{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:-.02em;line-height:.95}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--mercy);outline-offset:3px;border-radius:999px}
+
+  /* hero */
+  .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s ease;transform:scale(1.04)}
+  .slide.on{opacity:1;animation:drift 12s ease-out forwards}
+  @keyframes drift{from{transform:scale(1.08)}to{transform:scale(1)}}
+  .hero-shade{background:linear-gradient(to top,rgba(10,26,30,.92) 0%,rgba(10,26,30,.45) 45%,rgba(10,26,30,.15) 100%)}
+  .rise{opacity:0;transform:translateY(24px);animation:rise 1s cubic-bezier(.2,.7,.2,1) forwards}
+  .rise:nth-child(2){animation-delay:.15s}.rise:nth-child(3){animation-delay:.3s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .bar{height:3px;background:rgba(255,255,255,.3);flex:1;overflow:hidden;border-radius:2px}
+  .bar i{display:block;height:100%;width:0;background:#fff}
+  .bar.on i{animation:fill 6s linear forwards}
+  .bar.done i{width:100%}
+  @keyframes fill{to{width:100%}}
+
+  /* nav */
+  .pill{background:rgba(255,255,255,.78);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,.6);box-shadow:0 8px 30px rgba(10,26,30,.12)}
+  .navlink{padding:.5rem .9rem;border-radius:999px;font-weight:600;font-size:.9rem;transition:background .2s}
+  .navlink:hover{background:var(--ray)}
+  .navlink[aria-current]{background:var(--ink);color:#fff}
+
+  .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.5rem;border-radius:999px;font-weight:600;transition:transform .2s,background .2s}
+  .btn:hover{transform:translateY(-2px)}
+  .rays{background:repeating-conic-gradient(from 200deg at 50% 0%,rgba(180,56,46,.07) 0 6deg,transparent 6deg 14deg);mask-image:linear-gradient(to bottom,#000,transparent 85%);-webkit-mask-image:linear-gradient(to bottom,#000,transparent 85%)}
+
+  /* napisy w hero zmieniają się razem ze zdjęciem */
+  .cap{display:block;transition:opacity .4s ease,transform .4s ease}
+  .cap.out{opacity:0;transform:translateY(-14px)}
+
+  /* animacje po kliknięciu */
+  .btn,.tile,.navlink{position:relative;overflow:hidden}
+  .tile{transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+  .btn:active,.navlink:active,.tile:active{transform:scale(.94)}
+  .ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.28;transform:scale(0);animation:ripple .8s ease-out forwards;pointer-events:none}
+  @keyframes ripple{to{transform:scale(1);opacity:0}}
+  .spark{position:fixed;z-index:100;pointer-events:none;font-weight:700;line-height:1;color:var(--mercy);text-shadow:0 0 0 #fff}
+  #mobile-menu.show{animation:menuIn .4s cubic-bezier(.2,.8,.2,1)}
+  @keyframes menuIn{from{opacity:0;transform:translateY(-14px) scale(.95)}}
+  #menu-btn svg{transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+  #menu-btn[aria-expanded="true"] svg{transform:rotate(90deg)}
+
+  @media (prefers-reduced-motion:reduce){
+    .slide.on,.rise,.bar.on i{animation:none;opacity:1;transform:none}
+    .bar.on i{width:100%}
+    .slide{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="fixed top-4 inset-x-0 z-50 px-4">
+  <nav class="pill max-w-5xl mx-auto rounded-full pl-5 pr-2 py-2 flex items-center justify-between" aria-label="Główna nawigacja">
+    <a href="index.html" class="flex items-center gap-2.5 font-bold">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="var(--mercy)" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M6.5 9h11"/></svg>
+      <span class="text-[15px]">Parafia Mostówka</span>
+    </a>
+    <div class="hidden md:flex items-center gap-1">
+      <a class="navlink" href="index.html" aria-current="page">Start</a>
+      <a class="navlink" href="#">Aktualności</a>
+      <a class="navlink" href="#">Duszpasterze</a>
+      <a class="navlink" href="#">Msze</a>
+      <a class="navlink" href="#kontakt">Kontakt</a>
+    </div>
+    <button id="menu-btn" class="md:hidden w-11 h-11 grid place-items-center rounded-full hover:bg-white/70" aria-label="Otwórz menu" aria-expanded="false" aria-controls="mobile-menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg>
+    </button>
+  </nav>
+  <div id="mobile-menu" class="pill md:hidden max-w-5xl mx-auto mt-2 rounded-3xl p-3 hidden flex-col">
+    <a class="navlink block" href="index.html" aria-current="page">Start</a>
+    <a class="navlink block" href="#">Aktualności</a>
+    <a class="navlink block" href="#">Duszpasterze</a>
+    <a class="navlink block" href="#">Msze</a>
+    <a class="navlink block" href="#kontakt">Kontakt</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative min-h-[100svh] flex items-end overflow-hidden bg-[var(--ink)] text-white">
+  <div id="slides" class="absolute inset-0" aria-hidden="true">
+    <img class="slide on" src="o5k4rsolutions-content/files/unnamed-12.jpg" alt="">
+    <img class="slide" src="o5k4rsolutions-content/files/mostowka-parafia.png" alt="">
+    <img class="slide" src="o5k4rsolutions-content/files/zbramy.jpg" alt="">
+  </div>
+  <div class="hero-shade absolute inset-0"></div>
+
+  <div class="relative w-full max-w-6xl mx-auto px-6 pb-14 md:pb-20 pt-40">
+    <p class="rise font-semibold text-sm text-white/80 mb-5"><span id="eb" class="cap">Zapraszamy do wspólnej modlitwy</span></p>
+    <h1 class="rise display text-[3.2rem] sm:text-7xl md:text-[7rem] max-w-4xl"><span id="hl" class="cap">Witaj w domu Bożego Miłosierdzia</span></h1>
+    <div class="rise mt-10 flex flex-wrap gap-3">
+      <a href="#" class="btn bg-white text-[var(--ink)] hover:bg-[var(--ray)]">Sprawdź godziny Mszy</a>
+      <a href="#kontakt" class="btn border border-white/40 hover:bg-white/10">Kontakt z parafią</a>
+    </div>
+    <div class="mt-14 flex gap-2 max-w-md" id="bars" aria-hidden="true">
+      <span class="bar on"><i></i></span><span class="bar"><i></i></span><span class="bar"><i></i></span>
+    </div>
+  </div>
+</section>
+
+<!-- O PARAFII -->
+<main>
+  <section class="relative overflow-hidden">
+    <div class="rays absolute inset-x-0 top-0 h-[28rem]" aria-hidden="true"></div>
+    <div class="relative max-w-6xl mx-auto px-6 py-24 md:py-36 grid md:grid-cols-12 gap-10 md:gap-16">
+      <h2 class="display text-5xl md:text-7xl md:col-span-5">Wspólnota, w której każdy ma miejsce</h2>
+      <div class="md:col-span-7 md:pt-4 space-y-6 text-lg leading-relaxed max-w-prose text-[var(--ink)]/80">
+        <p>Parafia Miłosierdzia Bożego to duchowe serce naszej społeczności. Wspólnie celebrujemy życie w wierze – od radosnych chwil chrztów i ślubów, po momenty zadumy podczas niedzielnych Mszy Świętych.</p>
+        <p>Jesteśmy wspólnotą otwartą na każdego. W parafii nie tylko rozwijamy swoją wiarę, ale także budujemy silne więzi poprzez wzajemną pomoc, modlitwę i troskę o drugiego człowieka. Serdecznie zapraszamy – niech to będzie miejsce, w którym poczujesz się jak w domu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKRÓTY -->
+  <section class="max-w-6xl mx-auto px-6 pb-24 md:pb-32 grid md:grid-cols-3 gap-4">
+    <a href="#" class="group rounded-[2rem] bg-[var(--ink)] text-white p-8 min-h-[16rem] flex flex-col justify-between transition hover:-translate-y-1">
+      <svg class="w-9 h-9 text-[var(--ray)]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <div><h3 class="display text-4xl mb-2">Msze Święte</h3><p class="text-white/70">Zobacz, kiedy zaprosimy Cię na modlitwę.</p></div>
+    </a>
+    <a href="#" class="group rounded-[2rem] bg-white p-8 min-h-[16rem] flex flex-col justify-between transition hover:-translate-y-1 border border-[var(--line)]">
+      <svg class="w-9 h-9 text-[var(--mercy)]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h11a2 2 0 012 2v12H7a2 2 0 01-2-2V5zM18 9h1a2 2 0 012 2v6a2 2 0 01-2 2M8 9h6M8 13h6"/></svg>
+      <div><h3 class="display text-4xl mb-2">Aktualności</h3><p class="text-[var(--ink)]/70">Ogłoszenia i wydarzenia z życia parafii.</p></div>
+    </a>
+    <a href="#" class="group rounded-[2rem] bg-[var(--ray)] p-8 min-h-[16rem] flex flex-col justify-between transition hover:-translate-y-1">
+      <svg class="w-9 h-9 text-[var(--ink)]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+      <div><h3 class="display text-4xl mb-2">Duszpasterze</h3><p class="text-[var(--ink)]/70">Poznaj kapłanów posługujących w Mostówce.</p></div>
+    </a>
+  </section>
+</main>
+
+<!-- STOPKA / KONTAKT -->
+<footer id="kontakt" class="relative overflow-hidden bg-[var(--ink)] text-white">
+  <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image:url('o5k4rsolutions-content/files/mostowka-parafia.png');filter:blur(10px);transform:scale(1.1)" aria-hidden="true"></div>
+  <div class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
+    <h2 class="display text-5xl md:text-7xl max-w-3xl">Zapraszamy do Mostówki</h2>
+    <div class="mt-14 grid sm:grid-cols-2 gap-10 max-w-2xl">
+      <div>
+        <p class="text-white/60 text-sm mb-2">Adres</p>
+        <p class="text-lg">ul. Akacjowa 2<br>07-230 Mostówka</p>
+      </div>
+      <div>
+        <p class="text-white/60 text-sm mb-2">Telefon</p>
+        <a href="tel:+48297582533" class="text-lg underline decoration-white/30 underline-offset-4 hover:decoration-white">29 758 25 33</a>
+      </div>
+    </div>
+    <div class="mt-20 pt-6 border-t border-white/15 flex flex-wrap justify-between gap-3 text-sm text-white/60">
+      <p>Parafia Rzymskokatolicka pw. Miłosierdzia Bożego</p>
+      <p>Wykonanie: <b class="text-white">O5K4R Solutions</b></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // menu mobilne
+  const btn=document.getElementById('menu-btn'),menu=document.getElementById('mobile-menu');
+  btn.addEventListener('click',()=>{
+    const open=menu.classList.toggle('hidden');
+    menu.classList.toggle('flex',!open);
+    btn.setAttribute('aria-expanded',String(!open));
+    if(!open){menu.classList.remove('show');void menu.offsetWidth;menu.classList.add('show');}
+  });
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.add('hidden');menu.classList.remove('flex');btn.setAttribute('aria-expanded','false')}));
+
+  // slider w hero
+  const slides=[...document.querySelectorAll('.slide')],bars=[...document.querySelectorAll('.bar')];
+  const eb=document.getElementById('eb'),hl=document.getElementById('hl');
+  const caps=[
+    ['Zapraszamy do wspólnej modlitwy','Witaj w domu Bożego Miłosierdzia'],
+    ['Parafia w Mostówce','Wiara, która łączy sąsiadów'],
+    ['Drzwi zawsze otwarte','Wejdź i poczuj się jak u siebie']
+  ];
+  function setCaption(i){
+    eb.classList.add('out');hl.classList.add('out');
+    setTimeout(()=>{eb.textContent=caps[i][0];hl.textContent=caps[i][1];eb.classList.remove('out');hl.classList.remove('out');},420);
+  }
+  let n=0;
+  setInterval(()=>{
+    slides[n].classList.remove('on');bars[n].classList.remove('on');bars[n].classList.add('done');
+    n=(n+1)%slides.length;
+    if(n===0)bars.forEach(b=>b.classList.remove('done'));
+    void bars[n].offsetWidth;
+    slides[n].classList.add('on');bars[n].classList.add('on');
+    setCaption(n);
+  },6000);
+
+  // animacje po kliknięciu: fala + krzyżyki
+  document.querySelectorAll('main a.group').forEach(a=>a.classList.add('tile'));
+  const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('.btn,.tile,.navlink');
+    if(!t)return;
+    if(t.getAttribute('href')==='#')e.preventDefault();
+    if(calm)return;
+    const r=t.getBoundingClientRect(),s=Math.max(r.width,r.height)*2;
+    const rip=document.createElement('span');
+    rip.className='ripple';
+    rip.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
+    t.appendChild(rip);
+    setTimeout(()=>rip.remove(),800);
+    for(let k=0;k<7;k++){
+      const p=document.createElement('span');
+      p.className='spark';p.textContent='+';
+      p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';
+      p.style.fontSize=(14+Math.random()*14)+'px';
+      document.body.appendChild(p);
+      const a=Math.PI*2*k/7+Math.random()*.6,d=40+Math.random()*50;
+      p.animate([
+        {transform:'translate(-50%,-50%) scale(.4) rotate(0)',opacity:1},
+        {transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d}px)) scale(1.2) rotate(${Math.random()*180}deg)`,opacity:0}
+      ],{duration:700+Math.random()*300,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>p.remove();
+    }
+  });
+</script>
+</body>
+</html>

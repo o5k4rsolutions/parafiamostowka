@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#10262b;      /* głęboki zielono-granatowy */
-    --ray:#dbe8ee;      /* blady błękit z obrazu Miłosierdzia */
+    --ink:#10262b;      
+    --ray:#dbe8ee;      
     --mist:#f3f7f8;
-    --mercy:#b4382e;    /* czerwień promienia, tylko akcent */
+    --mercy:#b4382e;    
     --line:rgba(16,38,43,.12);
   }
   html{scroll-padding-top:5rem}
@@ -21,7 +21,6 @@
   .display{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:-.02em;line-height:.95}
   a:focus-visible,button:focus-visible{outline:3px solid var(--mercy);outline-offset:3px;border-radius:999px}
 
-  /* hero */
   .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s ease;transform:scale(1.04)}
   .slide.on{opacity:1;animation:drift 12s ease-out forwards}
   @keyframes drift{from{transform:scale(1.08)}to{transform:scale(1)}}
@@ -35,7 +34,6 @@
   .bar.done i{width:100%}
   @keyframes fill{to{width:100%}}
 
-  /* nav */
   .pill{background:rgba(255,255,255,.78);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,.6);box-shadow:0 8px 30px rgba(10,26,30,.12)}
   .navlink{padding:.5rem .9rem;border-radius:999px;font-weight:600;font-size:.9rem;transition:background .2s}
   .navlink:hover{background:var(--ray)}
@@ -45,11 +43,9 @@
   .btn:hover{transform:translateY(-2px)}
   .rays{background:repeating-conic-gradient(from 200deg at 50% 0%,rgba(180,56,46,.07) 0 6deg,transparent 6deg 14deg);mask-image:linear-gradient(to bottom,#000,transparent 85%);-webkit-mask-image:linear-gradient(to bottom,#000,transparent 85%)}
 
-  /* napisy w hero zmieniają się razem ze zdjęciem */
   .cap{display:block;transition:opacity .4s ease,transform .4s ease}
   .cap.out{opacity:0;transform:translateY(-14px)}
 
-  /* animacje po kliknięciu */
   .btn,.tile,.navlink{position:relative;overflow:hidden}
   .tile{transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
   .btn:active,.navlink:active,.tile:active{transform:scale(.94)}
@@ -70,7 +66,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <header class="fixed top-4 inset-x-0 z-50 px-4">
   <nav class="pill max-w-5xl mx-auto rounded-full pl-5 pr-2 py-2 flex items-center justify-between" aria-label="Główna nawigacja">
     <a href="index.html" class="flex items-center gap-2.5 font-bold">
@@ -186,9 +181,9 @@
   const slides=[...document.querySelectorAll('.slide')],bars=[...document.querySelectorAll('.bar')];
   const eb=document.getElementById('eb'),hl=document.getElementById('hl');
   const caps=[
-    ['Zapraszamy do wspólnej modlitwy','Witaj w domu Bożego Miłosierdzia'],
-    ['Parafia w Mostówce','Wiara, która łączy sąsiadów'],
-    ['Drzwi zawsze otwarte','Wejdź i poczuj się jak u siebie']
+    ['','Parafia w Mostówce'],
+    ['','Wiara, która łączy...'],
+    ['','Wejdź i poczuj się jak u siebie']
   ];
   function setCaption(i){
     eb.classList.add('out');hl.classList.add('out');
